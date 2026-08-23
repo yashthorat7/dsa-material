@@ -3,7 +3,7 @@
 A fast reference guide and interactive tracker for Data Structures and Algorithms with clean C++ notes.
 
 <p align="center">
-  <img src="assets/cover.png" alt="DSA Notes & Sheets" width="600">
+  <img src="assets/images/cover.png" alt="DSA Notes & Sheets" width="600">
 </p>
 
 > **[Digital Version](https://dummy-dsa.vercel.app)**
@@ -34,9 +34,9 @@ npx serve .
 dsa-notes/
 ├── index.html          # Interactive SPA web reader & problem tracker
 ├── assets/
-│   ├── style.css       # Clean dark/light design system & themes
-│   ├── script.js       # Client-side router, KaTeX & tracker engine
-│   └── cover.png       # Guide illustration cover
+│   ├── images/         # Media and illustration assets (e.g. cover.png)
+│   ├── scripts/        # Modular ES6 router, KaTeX & tracker engine
+│   └── styles/         # Clean dark/light design system & themes (style.css)
 ├── docs/
 │   ├── index.md        # Table of contents & chapter links
 │   ├── cheatsheet.md   # Algorithm & data structure cheat sheet

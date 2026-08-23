@@ -1,0 +1,143 @@
+/* floating header trigger zone */
+.header-trigger-zone {
+    position: fixed;
+    top: 0.75rem;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1300;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+    padding-left: var(--container-padding);
+    padding-right: var(--container-padding);
+    box-sizing: border-box;
+    transition: transform var(--transition-smooth), opacity var(--transition-smooth);
+}
+
+/* auto-hide on scroll down */
+.header-trigger-zone.header-hidden {
+    transform: translateY(-140%);
+    opacity: 0;
+}
+
+/* controls container */
+.floating-controls-container {
+    width: 100%;
+    max-width: var(--content-max-width);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: none;
+    box-sizing: border-box;
+}
+
+/* circular back button */
+.minimal-back-circle {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--floating-nav-bg);
+    border: 1px solid var(--floating-nav-border);
+    color: var(--text-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+    pointer-events: auto;
+    font-size: 0.82rem;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .minimal-back-circle:hover {
+        background: var(--bg-tertiary);
+        border-color: var(--border-color-hover);
+    }
+}
+
+/* right controls group */
+.floating-controls-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    pointer-events: auto;
+}
+
+/* frosted capsule navigation pill */
+.floating-capsule {
+    background: var(--floating-nav-bg);
+    border: 1px solid var(--floating-nav-border);
+    border-radius: 50px;
+    height: 34px;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+/* theme toggle button */
+.minimal-circle-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--floating-nav-bg);
+    border: 1px solid var(--floating-nav-border);
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+    font-size: 0.84rem;
+    outline: none;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+    flex-shrink: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .minimal-circle-btn:hover {
+        color: var(--text-primary);
+        background: var(--bg-tertiary);
+        border-color: var(--border-color-hover);
+    }
+}
+
+/* capsule icon button */
+.floating-capsule .icon-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    cursor: pointer;
+    outline: none;
+    transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .floating-capsule .icon-btn:hover {
+        color: var(--text-primary);
+        background: var(--bg-tertiary);
+    }
+}
+
+.floating-capsule .icon-btn.active {
+    color: var(--text-primary);
+    background: var(--bg-tertiary);
+}

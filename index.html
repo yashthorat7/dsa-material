@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DSA Guide</title>
+    <meta name="description" content="Fast reference guide and interactive tracker for Data Structures and Algorithms with clean modern C++ notes.">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="assets/styles/style.css">
 </head>
 <body class="dark-theme">
     <div class="header-trigger-zone">
@@ -16,11 +17,15 @@
             <button id="back-btn" class="minimal-back-circle" style="display: none;" aria-label="Go back">
                 <i class="fa-solid fa-chevron-left"></i>
             </button>
-            <div class="floating-capsule">
-                <button id="home-btn" class="icon-btn" aria-label="Home"><i class="fa-solid fa-house"></i></button>
-                <button id="tracker-btn" class="icon-btn" aria-label="Problem tracker"><i class="fa-solid fa-circle-check"></i></button>
-                <button id="cs-btn" class="icon-btn" aria-label="Cheat sheet"><i class="fa-solid fa-scroll"></i></button>
-                <button id="theme-toggle" class="icon-btn" aria-label="Toggle theme"><i class="fa-solid fa-circle-half-stroke"></i></button>
+            <div class="floating-controls-right">
+                <div class="floating-capsule">
+                    <button id="home-btn" class="icon-btn" aria-label="Home"><i class="fa-solid fa-house"></i></button>
+                    <button id="tracker-btn" class="icon-btn" aria-label="Problem tracker"><i class="fa-solid fa-circle-check"></i></button>
+                    <button id="cs-btn" class="icon-btn" aria-label="Cheat sheet"><i class="fa-solid fa-scroll"></i></button>
+                </div>
+                <button id="theme-toggle" class="minimal-circle-btn" aria-label="Toggle theme">
+                    <i class="fa-solid fa-circle-half-stroke"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -33,42 +38,61 @@
 
     <div id="tracker-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
-            <div class="modal-header">
-                <div class="tracker-stats">
-                    <button class="stat-item active" data-filter="all"><span id="stat-total">0</span></button>
-                    <button class="stat-item solved" data-filter="solved"><span class="status-marker solved"><i class="fa-solid fa-check"></i></span> <span id="stat-solved">0</span> Solved</button>
-                    <button class="stat-item progress" data-filter="progress"><span class="status-marker progress"><i class="fa-solid fa-minus"></i></span> <span id="stat-progress">0</span> Progress</button>
-                    <button class="stat-item todo" data-filter="todo"><span class="status-marker todo"></span> <span id="stat-todo">0</span> Todo</button>
-                </div>
-            </div>
-            <div class="modal-body">
-                <div class="tracker-controls">
+            <div class="smart-tracker-toolbar">
+                <div class="toolbar-search-row">
                     <div class="search-input-wrapper">
                         <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                        <input type="text" id="search-input" class="minimal-search" placeholder="Search problem, pattern, company...">
-                        <button id="search-clear-btn" class="search-clear-btn" style="display: none;"><i class="fa-solid fa-xmark"></i></button>
+                        <input type="text" id="search-input" class="minimal-search" placeholder="Search problems, topics, patterns, companies...">
+                        <button id="search-clear-btn" class="search-clear-btn" style="display: none;" aria-label="Clear search"><i class="fa-solid fa-xmark"></i></button>
                     </div>
-                    <select id="difficulty-select" class="minimal-select-sm">
-                        <option value="all">All Diff</option>
-                        <option value="Easy">Easy</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Hard">Hard</option>
-                    </select>
+                    <button id="mobile-filter-toggle" class="mobile-filter-btn" aria-label="Toggle filters">
+                        <i class="fa-solid fa-sliders"></i>
+                        <span id="filter-indicator-dot" class="filter-indicator-dot" style="display: none;"></span>
+                    </button>
+                    <div class="tracker-progress-card">
+                        <div class="progress-stats">
+                            <span class="progress-title">Progress</span>
+                            <span class="progress-fraction"><strong id="stat-solved">0</strong> / <span id="stat-total">0</span></span>
+                        </div>
+                        <div class="progress-bar-track">
+                            <div id="tracker-progress-fill" class="progress-bar-fill" style="width: 0%;"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="problems-table-container">
-                    <table class="problems-table">
-                        <thead>
-                            <tr>
-                                <th class="th-status" style="width: 36px; text-align: center;"></th>
-                                <th class="th-problem">Problem</th>
-                                <th class="th-diff" style="width: 48px; text-align: center;">Diff</th>
-                                <th class="th-companies" style="width: 68px; text-align: center;">Comp</th>
-                                <th class="th-solution" style="width: 52px; text-align: center;">Soln</th>
-                            </tr>
-                        </thead>
-                        <tbody id="problems-tbody"></tbody>
-                    </table>
+                <div id="toolbar-collapsible-filters" class="toolbar-filters-row">
+                    <div class="filter-segment status-segment">
+                        <button class="filter-chip active" data-filter="all">All</button>
+                        <button class="filter-chip chip-solved" data-filter="solved">
+                            <span class="status-marker solved"><i class="fa-solid fa-check"></i></span> Solved <span class="chip-badge" id="stat-solved-count">0</span>
+                        </button>
+                        <button class="filter-chip chip-progress" data-filter="progress">
+                            <span class="status-marker progress"><i class="fa-solid fa-minus"></i></span> Progress <span class="chip-badge" id="stat-progress-count">0</span>
+                        </button>
+                        <button class="filter-chip chip-todo" data-filter="todo">
+                            <span class="status-marker todo"></span> Todo <span class="chip-badge" id="stat-todo-count">0</span>
+                        </button>
+                    </div>
+                    <div class="filter-segment diff-segment">
+                        <button class="diff-chip active" data-diff="all">All Diff</button>
+                        <button class="diff-chip diff-easy" data-diff="Easy"><span class="diff-circle easy"></span> Easy</button>
+                        <button class="diff-chip diff-medium" data-diff="Medium"><span class="diff-circle medium"></span> Med</button>
+                        <button class="diff-chip diff-hard" data-diff="Hard"><span class="diff-circle hard"></span> Hard</button>
+                    </div>
                 </div>
+            </div>
+            <div class="problems-table-container">
+                <table class="problems-table">
+                    <thead>
+                        <tr>
+                            <th class="col-status"></th>
+                            <th class="col-problem">Problem</th>
+                            <th class="col-diff">Diff</th>
+                            <th class="col-comp">Comp</th>
+                            <th class="col-soln">Soln</th>
+                        </tr>
+                    </thead>
+                    <tbody id="problems-tbody"></tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -79,6 +103,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
-    <script src="assets/script.js"></script>
+    <script type="module" src="assets/scripts/script.js"></script>
 </body>
 </html>
