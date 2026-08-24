@@ -18,7 +18,7 @@
     --floating-nav-bg: rgba(40, 40, 46, 0.88);
     --floating-nav-border: rgba(255, 255, 255, 0.08);
     --popover-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.45), 0 4px 12px -2px rgba(0, 0, 0, 0.25);
-    --modal-overlay-bg: rgba(18, 18, 22, 0.96);
+    --modal-overlay-bg: var(--bg-primary);
 
     /* problem difficulty colors */
     --easy-color: #4ade80;
@@ -70,7 +70,7 @@ body.light-theme {
     --floating-nav-bg: rgba(242, 242, 245, 0.92);
     --floating-nav-border: rgba(0, 0, 0, 0.08);
     --popover-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.12), 0 4px 10px -2px rgba(0, 0, 0, 0.06);
-    --modal-overlay-bg: rgba(250, 250, 250, 0.98);
+    --modal-overlay-bg: var(--bg-primary);
 
     /* light difficulty colors */
     --easy-color: #16a34a;

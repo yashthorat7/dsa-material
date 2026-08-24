@@ -2,7 +2,7 @@
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: var(--modal-overlay-bg);
+    background: var(--bg-primary);
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -13,8 +13,6 @@
     padding-left: var(--container-padding);
     padding-right: var(--container-padding);
     box-sizing: border-box;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
 }
 
 /* modal content wrapper */

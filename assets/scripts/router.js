@@ -57,13 +57,17 @@ export function handleRoute(hash) {
     }
 
     if (isHome) return loadMarkdown('docs/index.md');
-    if (hash === '#cheatsheet') return loadMarkdown('docs/cheatsheet.md');
+    if (hash === '#cheatsheet' || hash === '#cheatsheets' || hash === '#cheatsheet-index') return loadMarkdown('docs/cheatsheet.md');
     if (isProblemsTable) return showProblemsTable();
     if (hash === '#roadmap') return loadMarkdown('docs/roadmap.md');
 
     // match chapter number routes
     const cm = hash.match(/^#chapter-(\d+)$/);
     if (cm) return loadMarkdown(`docs/chapters/chapter-${cm[1]}.md`);
+
+    // match chapter cheatsheet anchor routes
+    const csm = hash.match(/^#cheatsheet-(\d+)$/);
+    if (csm) return loadMarkdown('docs/cheatsheet.md', `${csm[1]}-chapter-${csm[1]}`);
 
     // match note path routes
     if (hash.startsWith('#note-')) {
@@ -78,6 +82,9 @@ export function handleRoute(hash) {
         }
         if (route.startsWith('chapter-')) {
             return loadMarkdown(`docs/chapters/${route}`, anchor);
+        }
+        if (route.startsWith('cheatsheet')) {
+            return loadMarkdown('docs/cheatsheet.md', anchor);
         }
         return loadMarkdown(`docs/${route}`, anchor);
     }
