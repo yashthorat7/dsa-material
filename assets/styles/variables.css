@@ -1,47 +1,76 @@
 :root {
-    /* dark theme tokens (default) */
-    --bg-primary: #1e1e25;
-    --bg-secondary: #28282e;
-    --bg-tertiary: #3a3a46;
-    --border-color: #2e2e3a;
-    --border-color-hover: #4a4a5c;
-    --text-primary: #e2e2e8;
-    --text-secondary: #afafc6;
-    --text-tertiary: #787890;
-    --accent-color: #e2e2e8;
-    --code-bg: #191920;
-    --code-border: #2e2e3a;
-    --link-color: #e2e2e8;
-    --table-header-bg: #25252e;
-    --table-stripe-bg: rgba(255, 255, 255, 0.015);
-    --table-hover-bg: rgba(255, 255, 255, 0.035);
-    --floating-nav-bg: rgba(40, 40, 46, 0.88);
-    --floating-nav-border: rgba(255, 255, 255, 0.08);
-    --popover-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.45), 0 4px 12px -2px rgba(0, 0, 0, 0.25);
-    --modal-overlay-bg: var(--bg-primary);
+    --bg-primary: #171720;
+    --bg-secondary: #20202c;
+    --bg-tertiary: #2c2c3c;
+    --modal-overlay-bg: #171720;
+    --floating-nav-bg: rgba(32, 32, 44, 0.88);
+    --floating-nav-border: rgba(255, 255, 255, 0.09);
+    --border-color: #2e2e42;
+    --border-color-hover: #484865;
 
-    /* problem difficulty colors */
-    --easy-color: #4ade80;
-    --medium-color: #fb923c;
-    --hard-color: #f87171;
-    --progress-color: #38bdf8;
+    --text-primary: #f0f1f7;
+    --text-secondary: #a6a7c3;
+    --text-tertiary: #757694;
+    --link-color: #a5b4fc;
+    --accent-color: #939bf4;
+    --selection-bg: rgba(147, 155, 244, 0.28);
+    --focus-ring: rgba(147, 155, 244, 0.15);
 
-    /* syntax highlighting tokens */
-    --token-comment: #606070;
+    --table-header-bg: #1d1d28;
+    --table-stripe-bg: rgba(255, 255, 255, 0.018);
+    --table-hover-bg: rgba(255, 255, 255, 0.04);
+
+    --code-bg: #13131b;
+    --code-border: #2b2b3d;
+    --token-comment: #65657d;
     --token-keyword: #e06c75;
     --token-string: #98c379;
     --token-function: #61afef;
     --token-number: #e5c07b;
-    --token-operator: #8888a0;
+    --token-operator: #8f8fb0;
     --token-type: #c678dd;
 
-    /* layout and transitions */
+    --easy-color: #34d399;
+    --easy-bg: rgba(52, 211, 153, 0.14);
+    --medium-color: #fb923c;
+    --medium-bg: rgba(251, 146, 60, 0.14);
+    --hard-color: #f87171;
+    --hard-bg: rgba(248, 113, 113, 0.14);
+    --progress-color: #38bdf8;
+    --progress-bg: rgba(56, 189, 248, 0.18);
+    --capsule-icon-color: #fbbf24;
+    --leetcode-icon: url('../images/leetcode-dark.svg');
+
+    --alert-note-color: #60a5fa;
+    --alert-note-bg: rgba(96, 165, 250, 0.08);
+    --alert-tip-color: #34d399;
+    --alert-tip-bg: rgba(52, 211, 153, 0.08);
+    --alert-important-color: #c084fc;
+    --alert-important-bg: rgba(192, 132, 252, 0.08);
+    --alert-warning-color: #fb923c;
+    --alert-warning-bg: rgba(251, 146, 60, 0.08);
+    --alert-caution-color: #f87171;
+    --alert-caution-bg: rgba(248, 113, 113, 0.08);
+
+    --shadow-soft-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-soft-sm: 0 2px 8px -1px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.15);
+    --shadow-soft-md: 0 6px 20px -3px rgba(0, 0, 0, 0.3), 0 2px 6px -1px rgba(0, 0, 0, 0.15);
+    --shadow-soft-lg: 0 14px 38px -6px rgba(0, 0, 0, 0.4), 0 4px 12px -2px rgba(0, 0, 0, 0.2);
+    --popover-shadow: 0 12px 36px -6px rgba(0, 0, 0, 0.42), 0 4px 14px -2px rgba(0, 0, 0, 0.22);
+    --nav-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35), 0 1px 4px rgba(0, 0, 0, 0.2);
+    --card-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.25);
+
     --content-max-width: 880px;
     --container-padding: 16px;
-
-    --transition-fast: 0.15s ease;
-    --transition-normal: 0.2s ease;
-    --transition-smooth: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    --radius-xs: 4px;
+    --radius-sm: 7px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+    --radius-pill: 9999px;
+    --transition-fast: 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-normal: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-smooth: 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @media (max-width: 768px) {
@@ -50,40 +79,67 @@
     }
 }
 
+:root.light-theme,
+html.light-theme,
 body.light-theme {
-    /* light theme tokens */
-    --bg-primary: #fafafa;
-    --bg-secondary: #f2f2f5;
-    --bg-tertiary: #e8e8ed;
-    --border-color: #ceced1;
-    --border-color-hover: #a0a0b0;
-    --text-primary: #1a1a28;
-    --text-secondary: #606078;
-    --text-tertiary: #8a8aa0;
-    --accent-color: #1a1a28;
-    --code-bg: #f5f5f8;
-    --code-border: #d2d2d2;
-    --link-color: #1a1a28;
-    --table-header-bg: #eaeaf0;
-    --table-stripe-bg: rgba(0, 0, 0, 0.02);
-    --table-hover-bg: rgba(0, 0, 0, 0.04);
-    --floating-nav-bg: rgba(242, 242, 245, 0.92);
-    --floating-nav-border: rgba(0, 0, 0, 0.08);
-    --popover-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.12), 0 4px 10px -2px rgba(0, 0, 0, 0.06);
-    --modal-overlay-bg: var(--bg-primary);
+    --bg-primary: #fbfbfe;
+    --bg-secondary: #f2f4f9;
+    --bg-tertiary: #e6e9f3;
+    --modal-overlay-bg: #fbfbfe;
+    --floating-nav-bg: rgba(255, 255, 255, 0.92);
+    --floating-nav-border: rgba(24, 26, 38, 0.08);
+    --border-color: #dce0eb;
+    --border-color-hover: #adb4c8;
 
-    /* light difficulty colors */
-    --easy-color: #16a34a;
-    --medium-color: #ea580c;
-    --hard-color: #dc2626;
-    --progress-color: #0284c7;
+    --text-primary: #181a26;
+    --text-secondary: #5a6078;
+    --text-tertiary: #8a91a8;
+    --link-color: #4338ca;
+    --accent-color: #4f46e5;
+    --selection-bg: rgba(79, 70, 229, 0.18);
+    --focus-ring: rgba(79, 70, 229, 0.12);
 
-    /* light syntax tokens */
-    --token-comment: #9090a8;
+    --table-header-bg: #eaeef6;
+    --table-stripe-bg: rgba(24, 26, 38, 0.018);
+    --table-hover-bg: rgba(24, 26, 38, 0.038);
+
+    --code-bg: #f3f5fa;
+    --code-border: #dbe0eb;
+    --token-comment: #8a8fa3;
     --token-keyword: #be123c;
     --token-string: #15803d;
     --token-function: #1d4ed8;
     --token-number: #b45309;
-    --token-operator: #606078;
+    --token-operator: #5a6078;
     --token-type: #6d28d9;
+
+    --easy-color: #059669;
+    --easy-bg: rgba(5, 150, 105, 0.12);
+    --medium-color: #ea580c;
+    --medium-bg: rgba(234, 88, 12, 0.12);
+    --hard-color: #dc2626;
+    --hard-bg: rgba(220, 38, 38, 0.12);
+    --progress-color: #0284c7;
+    --progress-bg: rgba(2, 132, 199, 0.14);
+    --capsule-icon-color: #d97706;
+    --leetcode-icon: url('../images/leetcode.svg');
+
+    --alert-note-color: #2563eb;
+    --alert-note-bg: rgba(37, 99, 235, 0.08);
+    --alert-tip-color: #059669;
+    --alert-tip-bg: rgba(5, 150, 105, 0.08);
+    --alert-important-color: #7c3aed;
+    --alert-important-bg: rgba(124, 58, 237, 0.08);
+    --alert-warning-color: #ea580c;
+    --alert-warning-bg: rgba(234, 88, 12, 0.08);
+    --alert-caution-color: #dc2626;
+    --alert-caution-bg: rgba(220, 38, 38, 0.08);
+
+    --shadow-soft-xs: 0 1px 2px rgba(24, 26, 38, 0.04);
+    --shadow-soft-sm: 0 2px 8px -1px rgba(24, 26, 38, 0.06), 0 1px 3px rgba(24, 26, 38, 0.03);
+    --shadow-soft-md: 0 6px 20px -3px rgba(24, 26, 38, 0.08), 0 2px 6px -1px rgba(24, 26, 38, 0.03);
+    --shadow-soft-lg: 0 14px 38px -6px rgba(24, 26, 38, 0.1), 0 4px 12px -2px rgba(24, 26, 38, 0.04);
+    --popover-shadow: 0 10px 32px -4px rgba(24, 26, 38, 0.1), 0 4px 12px -2px rgba(24, 26, 38, 0.04);
+    --nav-shadow: 0 4px 20px -2px rgba(24, 26, 38, 0.07), 0 1px 3px rgba(24, 26, 38, 0.04);
+    --card-shadow: 0 4px 20px -4px rgba(24, 26, 38, 0.05);
 }

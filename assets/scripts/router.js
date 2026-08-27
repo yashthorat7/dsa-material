@@ -4,7 +4,6 @@ import { closeAllPopovers, showProblemsTable } from './tracker.js';
 import { updateHeaderActiveState } from './nav.js';
 import { enhanceLeetCodeLinks, wrapTables } from './markdown.js';
 
-// determine if hash matches a chapter route
 export function isChapterRoute(hash) {
     if (!hash) return false;
     const h = hash.toLowerCase();
@@ -14,7 +13,6 @@ export function isChapterRoute(hash) {
         || h.startsWith('#note-docs/chapters/');
 }
 
-// determine if hash matches a problem solution route
 export function isSolutionRoute(hash) {
     if (!hash) return false;
     const h = hash.toLowerCase();
@@ -34,7 +32,7 @@ export function isSolutionRoute(hash) {
     });
 }
 
-// client side route dispatcher
+// client-side route dispatcher
 export function handleRoute(hash) {
     closeAllPopovers();
 
@@ -61,15 +59,12 @@ export function handleRoute(hash) {
     if (isProblemsTable) return showProblemsTable();
     if (hash === '#roadmap') return loadMarkdown('docs/roadmap.md');
 
-    // match chapter number routes
     const cm = hash.match(/^#chapter-(\d+)$/);
     if (cm) return loadMarkdown(`docs/chapters/chapter-${cm[1]}.md`);
 
-    // match chapter cheatsheet anchor routes
     const csm = hash.match(/^#cheatsheet-(\d+)$/);
     if (csm) return loadMarkdown('docs/cheatsheet.md', `${csm[1]}-chapter-${csm[1]}`);
 
-    // match note path routes
     if (hash.startsWith('#note-')) {
         let route = hash.slice(6);
         let anchor = '';
@@ -89,7 +84,6 @@ export function handleRoute(hash) {
         return loadMarkdown(`docs/${route}`, anchor);
     }
 
-    // match problem id routes
     const pm = hash.match(/^#problem-(\d+)$/);
     if (pm) {
         const problems = appState.problems || [];
@@ -98,7 +92,6 @@ export function handleRoute(hash) {
     }
 }
 
-// intercept internal markdown anchor links
 export function onMarkdownClick(e) {
     const link = e.target.closest('a');
     if (!link) return;
@@ -113,13 +106,12 @@ export function onMarkdownClick(e) {
     window.location.hash = hash;
 }
 
-// fetch and render markdown document with math and syntax highlighting
 export function loadMarkdown(filepath, anchor = '') {
     const container = document.getElementById('markdown-container');
     if (!container) return;
     container.innerHTML = '';
 
-    fetch(filepath)
+    fetch(filepath, { cache: 'no-cache' })
         .then(r => {
             if (!r.ok) throw new Error('Document not found');
             return r.text();
@@ -127,7 +119,6 @@ export function loadMarkdown(filepath, anchor = '') {
         .then(text => {
             container.innerHTML = marked.parse(text);
 
-            // render latex math expressions
             if (typeof renderMathInElement === 'function') {
                 renderMathInElement(container, {
                     delimiters: [
@@ -143,7 +134,6 @@ export function loadMarkdown(filepath, anchor = '') {
             const isIndex = filepath.toLowerCase().endsWith('index.md');
             container.classList.toggle('is-index', isIndex);
 
-            // apply prism syntax highlighting
             if (window.Prism) {
                 Prism.highlightAllUnder(container);
             }
@@ -151,25 +141,38 @@ export function loadMarkdown(filepath, anchor = '') {
             enhanceLeetCodeLinks(filepath, container);
             wrapTables(container);
 
-            // manage scroll restoration
+            // scroll restoration
+            appState.isRestoringScroll = true;
             if (appState.shouldRestoreScroll) {
                 appState.shouldRestoreScroll = false;
                 const savedScroll = parseInt(localStorage.getItem('cpp_dsa_last_scroll') || '0', 10);
                 if (savedScroll > 0) {
-                    appState.isRestoringScroll = true;
                     setTimeout(() => {
                         window.scrollTo(0, savedScroll);
+                        appState.lastScrollY = Math.max(0, window.scrollY);
+                        const header = document.querySelector('.header-trigger-zone');
+                        if (header) header.classList.remove('header-hidden');
                         appState.isRestoringScroll = false;
                     }, 100);
                 } else if (anchor) {
                     scrollToAnchor(anchor, container);
                 } else {
                     window.scrollTo(0, 0);
+                    appState.lastScrollY = 0;
+                    const header = document.querySelector('.header-trigger-zone');
+                    if (header) header.classList.remove('header-hidden');
+                    appState.isRestoringScroll = false;
                 }
             } else if (anchor) {
                 scrollToAnchor(anchor, container);
             } else {
                 window.scrollTo(0, 0);
+                appState.lastScrollY = 0;
+                const header = document.querySelector('.header-trigger-zone');
+                if (header) header.classList.remove('header-hidden');
+                setTimeout(() => {
+                    appState.isRestoringScroll = false;
+                }, 100);
             }
         })
         .catch(() => {
@@ -177,8 +180,8 @@ export function loadMarkdown(filepath, anchor = '') {
         });
 }
 
-// smooth scroll to matching heading anchor
 export function scrollToAnchor(anchor, container) {
+    appState.isRestoringScroll = true;
     setTimeout(() => {
         const targetId = normalizeStr(anchor);
         let el = document.getElementById(anchor) || document.getElementById(targetId);
@@ -194,9 +197,15 @@ export function scrollToAnchor(anchor, container) {
         }
         if (el) {
             window.scrollTo({
-                top: el.getBoundingClientRect().top + window.scrollY - 70,
+                top: Math.max(0, el.getBoundingClientRect().top + window.scrollY - 70),
                 behavior: 'smooth'
             });
         }
-    }, 150);
+        setTimeout(() => {
+            appState.lastScrollY = Math.max(0, window.scrollY);
+            const header = document.querySelector('.header-trigger-zone');
+            if (header) header.classList.remove('header-hidden');
+            appState.isRestoringScroll = false;
+        }, 350);
+    }, 120);
 }

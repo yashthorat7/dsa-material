@@ -584,8 +584,8 @@ struct StringHasher {
 | Pattern | Invariant / Predicate | Time Complexity | Bounds |
 | :--- | :--- | :--- | :--- |
 | **Exact Target Lookup** | Closed interval `[low, high]`, `arr[mid] == target` | $O(\log N)$ | Returns index or $-1$ |
-| **`std::lower_bound`** | First position where `arr[i] >= target` | $O(\log N)$ | Range $[0, N]$ |
-| **`std::upper_bound`** | First position where `arr[i] > target` | $O(\log N)$ | Range $[0, N]$ |
+| **`lower_bound`** | First position where `arr[i] >= target` | $O(\log N)$ | Range $[0, N]$ |
+| **`upper_bound`** | First position where `arr[i] > target` | $O(\log N)$ | Range $[0, N]$ |
 | **Rotated Array Min** | If `arr[mid] > arr[high]`, pivot in right half | $O(\log N)$ | $O(1)$ |
 | **Search on Answer** | Monotonic predicate $P(x) \in \{0, 1\}$ | $O(\log(\text{Range}) \cdot T_{\text{check}})$ | Minimax optimization |
 | **Dual-Array Median** | Partition $X$ and $Y$ such that $\text{left} \le \text{right}$ | $O(\log(\min(N, M)))$ | $O(1)$ |
@@ -1056,7 +1056,7 @@ vector<int> topological_sort(int n, const vector<vector<int>>& adj) {
 | **Coin Change (Min)** | $dp[w] = \min(dp[w], dp[w - c] + 1)$ | $O(N \cdot \text{Amount})$ | $O(\text{Amount})$ |
 | **LCS (Subsequence)** | Match: $dp[i-1][j-1]+1$, Mismatch: $\max(dp[i-1][j], dp[i][j-1])$ | $O(N \cdot M)$ | $O(\min(N, M))$ (2 rows) |
 | **Edit Distance** | Delete, Insert, Replace min $+ 1$ | $O(N \cdot M)$ | $O(\min(N, M))$ |
-| **LIS ($O(N \log N)$)** | Patience Sorting via `std::lower_bound` on tails | $\Theta(N \log N)$ | $\Theta(N)$ |
+| **LIS ($O(N \log N)$)** | Patience Sorting via `lower_bound` on tails | $\Theta(N \log N)$ | $\Theta(N)$ |
 | **MCM (Interval DP)** | $dp[i][j] = \min_{k}(dp[i][k] + dp[k+1][j] + \text{cost})$ | $O(N^3)$ | $\Theta(N^2)$ |
 
 ### Core DP Templates

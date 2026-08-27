@@ -1,4 +1,3 @@
-// html entity escaping for safe dom insertion
 export function escapeHtml(str) {
     return String(str || '')
         .replace(/&/g, '&amp;')
@@ -8,7 +7,6 @@ export function escapeHtml(str) {
         .replace(/'/g, '&#039;');
 }
 
-// title case conversion while preserving acronyms
 export function toTitleCase(str) {
     if (!str) return '';
     return str.replace(/\b[a-zA-Z0-9'-]+\b/g, (word) => {
@@ -19,7 +17,6 @@ export function toTitleCase(str) {
     });
 }
 
-// slug generator for urls and hashes
 export function slugify(str) {
     return String(str || '')
         .toLowerCase()
@@ -27,7 +24,6 @@ export function slugify(str) {
         .replace(/(^-|-$)/g, '');
 }
 
-// normalize strings for heading and anchor comparison
 export function normalizeStr(s) {
     return (s || '')
         .normalize('NFD')

@@ -1,13 +1,12 @@
 import { escapeHtml, slugify } from './utils.js';
 import { appState } from './state.js';
 
-// configure custom marked extensions for alert callouts and code blocks
 export function initMarkdownRenderer() {
     if (typeof marked === 'undefined') return;
 
     const renderer = new marked.Renderer();
 
-    // render github style alert callout boxes
+    // github style callouts
     renderer.blockquote = function (token) {
         const text = typeof token === 'object' ? this.parser.parse(token.tokens) : token;
         const match = text.match(/\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/i);
@@ -29,7 +28,6 @@ export function initMarkdownRenderer() {
         return `<blockquote>${text}</blockquote>`;
     };
 
-    // wrap pre and code blocks with syntax class
     renderer.code = function (codeObj) {
         const text = typeof codeObj === 'object' ? codeObj.text : codeObj;
         const lang = (typeof codeObj === 'object' ? codeObj.lang : '') || 'cpp';
@@ -40,7 +38,6 @@ export function initMarkdownRenderer() {
     marked.use({ renderer });
 }
 
-// wrap html tables in a scroll container for mobile screens
 export function wrapTables(container) {
     if (!container) return;
     container.querySelectorAll('table').forEach(t => {
@@ -52,7 +49,7 @@ export function wrapTables(container) {
     });
 }
 
-// convert raw problem links into interactive capsule badges
+// convert plain problem links into interactive capsules
 export function enhanceLeetCodeLinks(filepath = '', targetContainer = null) {
     const container = targetContainer || document.getElementById('markdown-container');
     if (!container) return;
@@ -82,17 +79,14 @@ export function enhanceLeetCodeLinks(filepath = '', targetContainer = null) {
         const text = link.innerText.trim();
         let prob = null;
 
-        // match by leetcode number pattern
         const lcMatch = text.match(/LC\s*#?(\d+)/i) || href.match(/lc-?0*(\d+)\.md/i);
         if (lcMatch) prob = problems.find(p => String(p.id) === parseInt(lcMatch[1], 10).toString());
 
-        // match by problem title
         if (!prob) {
             const lower = text.toLowerCase();
             prob = sorted.find(p => p.name.toLowerCase() === lower) || sorted.find(p => lower.startsWith(p.name.toLowerCase()));
         }
 
-        // match by leetcode url slug
         if (!prob && href.includes('leetcode.com/problems/')) {
             const m = href.match(/problems\/([^\/\?#]+)/i);
             if (m) {
@@ -108,14 +102,6 @@ export function enhanceLeetCodeLinks(filepath = '', targetContainer = null) {
 
         if (!prob) return;
 
-        // build badge status icon
-        const state = appState.tracker[prob.id]?.status || 'todo';
-        const statusHtml = state === 'solved'
-            ? `<i class="fa-regular fa-circle-check" style="color:var(--easy-color);font-size:.8rem"></i>`
-            : state === 'progress'
-            ? `<i class="fa-regular fa-circle-dot" style="color:var(--medium-color);font-size:.8rem"></i>`
-            : '';
-
         const capsule = document.createElement('a');
         capsule.className = 'lc-problem-capsule';
 
@@ -129,12 +115,11 @@ export function enhanceLeetCodeLinks(filepath = '', targetContainer = null) {
 
         capsule.innerHTML = `
             <div class="lc-capsule-left">
-                <i class="fa-regular fa-file-code lc-icon"></i>
+                <span class="lc-icon" aria-hidden="true"></span>
                 <span>${prob.id}. ${escapeHtml(prob.name)}</span>
             </div>
             <div class="lc-capsule-right">
                 <span class="lc-diff ${prob.difficulty.toLowerCase()}">${prob.difficulty}</span>
-                ${statusHtml}
             </div>`;
 
         link.replaceWith(capsule);

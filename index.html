@@ -2,16 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>DSA Guide</title>
-    <meta name="description" content="Fast reference guide and interactive tracker for Data Structures and Algorithms with clean modern C++ notes.">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap">
+    <script>
+        (function() {
+            try {
+                var theme = localStorage.getItem('theme') || 'dark';
+                document.documentElement.classList.add(theme === 'light' ? 'light-theme' : 'dark-theme');
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     <link rel="stylesheet" href="assets/styles/style.css">
 </head>
-<body class="dark-theme">
+<body>
+    <script>
+        (function() {
+            try {
+                var theme = localStorage.getItem('theme') || 'dark';
+                document.body.classList.add(theme === 'light' ? 'light-theme' : 'dark-theme');
+            } catch (e) {}
+        })();
+    </script>
     <div class="header-trigger-zone">
         <div class="floating-controls-container">
             <button id="back-btn" class="minimal-back-circle" style="display: none;" aria-label="Go back">
@@ -61,22 +77,32 @@
                 </div>
                 <div id="toolbar-collapsible-filters" class="toolbar-filters-row">
                     <div class="filter-segment status-segment">
-                        <button class="filter-chip active" data-filter="all">All</button>
-                        <button class="filter-chip chip-solved" data-filter="solved">
-                            <span class="status-marker solved"><i class="fa-solid fa-check"></i></span> Solved <span class="chip-badge" id="stat-solved-count">0</span>
+                        <button class="filter-chip chip-solved active" data-filter="solved" aria-label="Toggle Solved">
+                            <span class="status-marker solved"><i class="fa-solid fa-check"></i></span>
+                            <span class="chip-text">Solved</span>
                         </button>
-                        <button class="filter-chip chip-progress" data-filter="progress">
-                            <span class="status-marker progress"><i class="fa-solid fa-minus"></i></span> Progress <span class="chip-badge" id="stat-progress-count">0</span>
+                        <button class="filter-chip chip-progress active" data-filter="progress" aria-label="Toggle In Progress">
+                            <span class="status-marker progress"><i class="fa-solid fa-minus"></i></span>
+                            <span class="chip-text">Progress</span>
                         </button>
-                        <button class="filter-chip chip-todo" data-filter="todo">
-                            <span class="status-marker todo"></span> Todo <span class="chip-badge" id="stat-todo-count">0</span>
+                        <button class="filter-chip chip-todo active" data-filter="todo" aria-label="Toggle Todo">
+                            <span class="status-marker todo"></span>
+                            <span class="chip-text">Todo</span>
                         </button>
                     </div>
                     <div class="filter-segment diff-segment">
-                        <button class="diff-chip active" data-diff="all">All Diff</button>
-                        <button class="diff-chip diff-easy" data-diff="Easy"><span class="diff-circle easy"></span> Easy</button>
-                        <button class="diff-chip diff-medium" data-diff="Medium"><span class="diff-circle medium"></span> Med</button>
-                        <button class="diff-chip diff-hard" data-diff="Hard"><span class="diff-circle hard"></span> Hard</button>
+                        <button class="diff-chip diff-easy active" data-diff="Easy" aria-label="Toggle Easy">
+                            <span class="diff-circle easy"></span>
+                            <span class="diff-text">Easy</span>
+                        </button>
+                        <button class="diff-chip diff-medium active" data-diff="Medium" aria-label="Toggle Medium">
+                            <span class="diff-circle medium"></span>
+                            <span class="diff-text">Med</span>
+                        </button>
+                        <button class="diff-chip diff-hard active" data-diff="Hard" aria-label="Toggle Hard">
+                            <span class="diff-circle hard"></span>
+                            <span class="diff-text">Hard</span>
+                        </button>
                     </div>
                 </div>
             </div>

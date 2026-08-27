@@ -1,32 +1,35 @@
-/* responsive table scroll wrapper */
 .table-scroll-wrap {
     width: 100%;
     max-width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    margin: 1.25rem 0 1.5rem;
-    border-radius: 8px;
+    overscroll-behavior-x: contain;
+    margin: 1.35rem 0 1.6rem;
+    border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
     background: var(--bg-primary);
+    box-shadow: var(--shadow-soft-xs);
+    box-sizing: border-box;
+    contain: paint;
 }
 
-/* markdown tables */
 .markdown-body table {
     width: 100%;
+    min-width: 100%;
     border-collapse: collapse;
-    font-size: 0.85rem;
-    line-height: 1.5;
+    font-size: 0.86rem;
+    line-height: 1.55;
     text-align: left;
+    margin: 0;
 }
 
-/* table headers */
 .markdown-body th {
     background: var(--table-header-bg);
     color: var(--text-secondary);
     font-weight: 600;
     font-size: 0.78rem;
     letter-spacing: 0.02em;
-    padding: 0.55rem 0.85rem;
+    padding: 0.6rem 0.95rem;
     border-bottom: 1px solid var(--border-color);
     border-right: 1px solid var(--border-color);
     vertical-align: middle;
@@ -37,9 +40,8 @@
     border-right: none;
 }
 
-/* table cells */
 .markdown-body td {
-    padding: 0.5rem 0.85rem;
+    padding: 0.55rem 0.95rem;
     border-bottom: 1px solid var(--border-color);
     border-right: 1px solid var(--border-color);
     vertical-align: middle;
@@ -54,18 +56,10 @@
     border-bottom: none;
 }
 
-/* zebra striping and row hover */
 .markdown-body tbody tr:nth-child(even) {
     background: var(--table-stripe-bg);
 }
 
-@media (hover: hover) and (pointer: fine) {
-    .markdown-body tbody tr:hover {
-        background: var(--table-hover-bg);
-    }
-}
-
-/* preserve inline math and code wrapping */
 .markdown-body td code,
 .markdown-body td .katex,
 .markdown-body th code {

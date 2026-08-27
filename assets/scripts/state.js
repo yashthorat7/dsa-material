@@ -1,22 +1,19 @@
 import { slugify } from './utils.js';
 
-// storage key for tracker data
 export const STORAGE_KEY = 'cpp_dsa_tracker_v2';
 
-// reactive application state container
 export const appState = {
     problems: [],
     tracker: {},
     navHistory: [],
-    activeFilter: 'all',
-    activeDiff: 'all',
+    activeStatusFilters: ['solved', 'progress', 'todo'],
+    activeDiffFilters: ['Easy', 'Medium', 'Hard'],
     activePopover: null,
     lastScrollY: 0,
     shouldRestoreScroll: false,
     isRestoringScroll: false
 };
 
-// restore tracker status from localstorage
 try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -26,7 +23,6 @@ try {
     console.warn('failed to parse tracker state:', err);
 }
 
-// persist tracker changes to localstorage
 export function saveTracker() {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appState.tracker));
@@ -35,7 +31,6 @@ export function saveTracker() {
     }
 }
 
-// fetch problem dataset and initialize missing statuses
 export async function loadProblems() {
     try {
         const res = await fetch('docs/problems.json');

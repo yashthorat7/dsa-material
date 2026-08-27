@@ -1,12 +1,21 @@
 import { appState } from './state.js';
 import { closeAllPopovers, showProblemsTable } from './tracker.js';
 
-// smart header auto-hide on scroll down and reveal on scroll up
 export function setupSmartScrollHeader() {
     const header = document.querySelector('.header-trigger-zone');
     if (!header) return;
 
     let ticking = false;
+    let lastModalScrollY = 0;
+
+    const handleScrollUpdate = (currentY, lastY) => {
+        if (currentY > 70 && currentY > lastY + 8) {
+            header.classList.add('header-hidden');
+            closeAllPopovers();
+        } else if (currentY < lastY - 8 || currentY <= 30) {
+            header.classList.remove('header-hidden');
+        }
+    };
 
     window.addEventListener('scroll', () => {
         if (!ticking) {
@@ -15,13 +24,8 @@ export function setupSmartScrollHeader() {
                 const modal = document.getElementById('tracker-modal');
                 const isModalOpen = modal && modal.style.display === 'flex';
 
-                if (!isModalOpen) {
-                    if (currentScrollY > 80 && currentScrollY > appState.lastScrollY + 10) {
-                        header.classList.add('header-hidden');
-                        closeAllPopovers();
-                    } else if (currentScrollY < appState.lastScrollY - 10 || currentScrollY <= 40) {
-                        header.classList.remove('header-hidden');
-                    }
+                if (!isModalOpen && !appState.isRestoringScroll) {
+                    handleScrollUpdate(currentScrollY, appState.lastScrollY);
                 }
                 appState.lastScrollY = Math.max(0, currentScrollY);
                 ticking = false;
@@ -30,15 +34,34 @@ export function setupSmartScrollHeader() {
         }
     }, { passive: true });
 
-    // reveal header on cursor near top of viewport
+    const modal = document.getElementById('tracker-modal');
+    if (modal) {
+        modal.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const currentScrollY = modal.scrollTop;
+                    handleScrollUpdate(currentScrollY, lastModalScrollY);
+                    lastModalScrollY = Math.max(0, currentScrollY);
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }, { passive: true });
+    }
+
     document.addEventListener('mousemove', (e) => {
         if (e.clientY <= 50) {
             header.classList.remove('header-hidden');
         }
     });
+
+    document.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches[0] && e.touches[0].clientY <= 60) {
+            header.classList.remove('header-hidden');
+        }
+    }, { passive: true });
 }
 
-// bind click handlers for header navigation buttons
 export function setupHeaderButtons(isSolutionRoute) {
     const backBtn = document.getElementById('back-btn');
     if (backBtn) {
@@ -77,7 +100,6 @@ export function setupHeaderButtons(isSolutionRoute) {
         });
     }
 
-    // close modal when clicking overlay backdrop
     const modal = document.getElementById('tracker-modal');
     if (modal) {
         modal.addEventListener('click', (e) => {
@@ -89,7 +111,6 @@ export function setupHeaderButtons(isSolutionRoute) {
     }
 }
 
-// update active button indicators based on current route
 export function updateHeaderActiveState(hash, isSolutionRoute, isChapterRoute) {
     const homeBtn = document.getElementById('home-btn');
     const trackerBtn = document.getElementById('tracker-btn');

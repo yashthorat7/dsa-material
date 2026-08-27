@@ -1,7 +1,6 @@
 import { escapeHtml, toTitleCase, slugify } from './utils.js';
 import { appState, saveTracker } from './state.js';
 
-// close active popover overlays
 export function closeAllPopovers() {
     if (appState.activePopover) {
         if (appState.activePopover._triggerBtn) {
@@ -12,7 +11,6 @@ export function closeAllPopovers() {
     }
 }
 
-// setup global outside click and escape key listeners
 export function setupGlobalClickListeners() {
     document.addEventListener('click', (e) => {
         if (
@@ -30,9 +28,14 @@ export function setupGlobalClickListeners() {
     });
 
     window.addEventListener('resize', closeAllPopovers);
+    window.addEventListener('scroll', closeAllPopovers, { passive: true });
+
+    const modal = document.getElementById('tracker-modal');
+    if (modal) {
+        modal.addEventListener('scroll', closeAllPopovers, { passive: true });
+    }
 }
 
-// open status selection popover
 export function openStatusPopover(triggerBtn, problemId) {
     if (appState.activePopover && appState.activePopover._triggerBtn === triggerBtn) {
         closeAllPopovers();
@@ -65,19 +68,25 @@ export function openStatusPopover(triggerBtn, problemId) {
     document.body.appendChild(popover);
     appState.activePopover = popover;
 
-    // calculate popover viewport placement
+    // viewport boundary clamping
     const rect = triggerBtn.getBoundingClientRect();
+    const popoverWidth = 145;
+    const popoverHeight = 125;
     let top = rect.bottom + 6;
     let left = rect.left;
 
-    if (top + 130 > window.innerHeight) top = rect.top - 130;
-    if (left + 150 > window.innerWidth) left = window.innerWidth - 160;
-    if (left < 10) left = 10;
+    if (left + popoverWidth > window.innerWidth - 12) {
+        left = window.innerWidth - popoverWidth - 12;
+    }
+    if (left < 12) left = 12;
+
+    if (top + popoverHeight > window.innerHeight - 12) {
+        top = Math.max(12, rect.top - popoverHeight - 6);
+    }
 
     popover.style.top = `${top}px`;
     popover.style.left = `${left}px`;
 
-    // handle status selection
     popover.querySelectorAll('.status-popover-item').forEach(item => {
         item.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -90,7 +99,7 @@ export function openStatusPopover(triggerBtn, problemId) {
             refreshTrackerStats();
             closeAllPopovers();
 
-            if (appState.activeFilter !== 'all') {
+            if (appState.activeStatusFilters.length > 0) {
                 renderTrackerTable();
             } else {
                 updateStatusButton(triggerBtn, selectedStatus);
@@ -99,7 +108,6 @@ export function openStatusPopover(triggerBtn, problemId) {
     });
 }
 
-// update status button icon and styling
 export function updateStatusButton(btn, status) {
     if (!btn) return;
     btn.className = `status-cb-btn ${status}`;
@@ -112,7 +120,6 @@ export function updateStatusButton(btn, status) {
     }
 }
 
-// open company list popover
 export function openCompaniesPopover(triggerBtn, problem) {
     if (appState.activePopover && appState.activePopover._triggerBtn === triggerBtn) {
         closeAllPopovers();
@@ -125,52 +132,90 @@ export function openCompaniesPopover(triggerBtn, problem) {
     popover._triggerBtn = triggerBtn;
     triggerBtn.classList.add('popover-open');
 
-    const companiesHtml = (problem.companies || [])
-        .map(c => `<span class="company-tag">${escapeHtml(c)}</span>`)
+    const companies = problem.companies || [];
+    const companiesHtml = companies
+        .map(c => `<span class="company-tag" data-company="${escapeHtml(c)}">${escapeHtml(c)}</span>`)
         .join('');
 
-    popover.innerHTML = `
-        <div class="companies-popover-body">
-            ${companiesHtml || '<span style="color:var(--text-tertiary);font-size:0.75rem">No companies recorded</span>'}
-        </div>
-    `;
+    popover.innerHTML = companiesHtml || '<span style="color:var(--text-tertiary);font-size:0.75rem">No companies recorded</span>';
 
     document.body.appendChild(popover);
     appState.activePopover = popover;
 
-    // mobile centered placement vs desktop anchor placement
-    if (window.innerWidth <= 600) {
-        popover.style.top = '50%';
-        popover.style.left = '50%';
-        popover.style.transform = 'translate(-50%, -50%)';
-        popover.style.width = 'calc(100vw - 32px)';
-        popover.style.maxWidth = '280px';
-    } else {
-        const rect = triggerBtn.getBoundingClientRect();
-        let top = rect.top;
-        let left = rect.right + 8;
+    const rect = triggerBtn.getBoundingClientRect();
+    const popoverWidth = Math.min(260, window.innerWidth - 24);
+    const popoverEstimatedHeight = Math.min(200, 16 + Math.ceil(companies.length / 2) * 32);
 
-        if (left + 260 > window.innerWidth) left = rect.left - 265;
-        if (left < 10) left = 10;
-        if (top + 180 > window.innerHeight) top = window.innerHeight - 190;
-        if (top < 10) top = 10;
-
-        popover.style.top = `${top}px`;
-        popover.style.left = `${left}px`;
+    let left = rect.left + (rect.width / 2) - (popoverWidth / 2);
+    if (left + popoverWidth > window.innerWidth - 12) {
+        left = window.innerWidth - popoverWidth - 12;
     }
+    if (left < 12) {
+        left = 12;
+    }
+
+    let top = rect.bottom + 6;
+    if (top + popoverEstimatedHeight > window.innerHeight - 12) {
+        top = Math.max(12, rect.top - popoverEstimatedHeight - 6);
+    }
+
+    popover.style.top = `${top}px`;
+    popover.style.left = `${left}px`;
+    popover.style.width = `${popoverWidth}px`;
+
+    popover.querySelectorAll('.company-tag').forEach(tag => {
+        tag.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const companyName = tag.getAttribute('data-company') || tag.innerText.trim();
+            const searchInput = document.getElementById('search-input');
+            const clearBtn = document.getElementById('search-clear-btn');
+            if (searchInput) {
+                searchInput.value = companyName;
+                localStorage.setItem('cpp_dsa_search', companyName);
+                if (clearBtn) clearBtn.style.display = 'flex';
+                renderTrackerTable();
+            }
+            closeAllPopovers();
+        });
+    });
 }
 
-// bind filter segment clicks and mobile filter toggle
+export function toggleStatusFilter(filterVal) {
+    const idx = appState.activeStatusFilters.indexOf(filterVal);
+    if (idx >= 0) {
+        appState.activeStatusFilters.splice(idx, 1);
+    } else {
+        appState.activeStatusFilters.push(filterVal);
+    }
+    updateFilterChipsActiveState();
+    closeAllPopovers();
+    renderTrackerTable();
+}
+
+export function toggleDiffFilter(diffVal) {
+    const idx = appState.activeDiffFilters.indexOf(diffVal);
+    if (idx >= 0) {
+        appState.activeDiffFilters.splice(idx, 1);
+    } else {
+        appState.activeDiffFilters.push(diffVal);
+    }
+    updateFilterChipsActiveState();
+    closeAllPopovers();
+    renderTrackerTable();
+}
+
 export function setupTrackerFilters() {
     document.querySelectorAll('.filter-chip[data-filter]').forEach(btn => {
         btn.addEventListener('click', () => {
-            setActiveFilter(btn.getAttribute('data-filter'));
+            const filterVal = btn.getAttribute('data-filter');
+            toggleStatusFilter(filterVal);
         });
     });
 
     document.querySelectorAll('.diff-chip[data-diff]').forEach(btn => {
         btn.addEventListener('click', () => {
-            setActiveDiff(btn.getAttribute('data-diff'));
+            const diffVal = btn.getAttribute('data-diff');
+            toggleDiffFilter(diffVal);
         });
     });
 
@@ -183,45 +228,29 @@ export function setupTrackerFilters() {
         });
     }
 
-    appState.activeFilter = localStorage.getItem('cpp_dsa_filter_status') || 'all';
-    appState.activeDiff = localStorage.getItem('cpp_dsa_filter_diff') || 'all';
+    appState.activeStatusFilters = ['solved', 'progress', 'todo'];
+    appState.activeDiffFilters = ['Easy', 'Medium', 'Hard'];
+
     updateFilterChipsActiveState();
 }
 
-// set active problem status filter
-export function setActiveFilter(filterVal) {
-    appState.activeFilter = filterVal;
-    localStorage.setItem('cpp_dsa_filter_status', appState.activeFilter);
-    updateFilterChipsActiveState();
-    closeAllPopovers();
-    renderTrackerTable();
-}
-
-// set active difficulty filter
-export function setActiveDiff(diffVal) {
-    appState.activeDiff = diffVal;
-    localStorage.setItem('cpp_dsa_filter_diff', appState.activeDiff);
-    updateFilterChipsActiveState();
-    closeAllPopovers();
-    renderTrackerTable();
-}
-
-// update active classes on filter buttons
 export function updateFilterChipsActiveState() {
     document.querySelectorAll('.filter-chip[data-filter]').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-filter') === appState.activeFilter);
+        const val = btn.getAttribute('data-filter');
+        btn.classList.toggle('active', appState.activeStatusFilters.includes(val));
     });
     document.querySelectorAll('.diff-chip[data-diff]').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-diff') === appState.activeDiff);
+        const val = btn.getAttribute('data-diff');
+        btn.classList.toggle('active', appState.activeDiffFilters.includes(val));
     });
 
     const dot = document.getElementById('filter-indicator-dot');
     if (dot) {
-        dot.style.display = (appState.activeFilter !== 'all' || appState.activeDiff !== 'all') ? 'block' : 'none';
+        const isFiltered = appState.activeStatusFilters.length < 3 || appState.activeDiffFilters.length < 3;
+        dot.style.display = isFiltered ? 'block' : 'none';
     }
 }
 
-// bind live search input and clear button
 export function setupSearch() {
     const searchInput = document.getElementById('search-input');
     const clearBtn = document.getElementById('search-clear-btn');
@@ -251,7 +280,6 @@ export function setupSearch() {
     }
 }
 
-// recalculate problem counts and progress bar fill
 export function refreshTrackerStats() {
     let solved = 0;
     let progress = 0;
@@ -286,7 +314,6 @@ export function refreshTrackerStats() {
     }
 }
 
-// render problem table rows with topic grouping and filters
 export function renderTrackerTable() {
     const tbody = document.getElementById('problems-tbody');
     if (!tbody) return;
@@ -299,8 +326,8 @@ export function renderTrackerTable() {
     const problems = appState.problems || [];
     const filtered = problems.filter(p => {
         const status = appState.tracker[p.id]?.status || 'todo';
-        if (appState.activeFilter !== 'all' && status !== appState.activeFilter) return false;
-        if (appState.activeDiff !== 'all' && p.difficulty !== appState.activeDiff) return false;
+        if (appState.activeStatusFilters.length > 0 && !appState.activeStatusFilters.includes(status)) return false;
+        if (appState.activeDiffFilters.length > 0 && !appState.activeDiffFilters.includes(p.difficulty)) return false;
         if (search) {
             const q = search;
             const matchesId = String(p.id).includes(q);
@@ -313,13 +340,11 @@ export function renderTrackerTable() {
         return true;
     });
 
-    // empty results feedback
     if (!filtered.length) {
         tbody.innerHTML = `<tr class="no-problems-row"><td colspan="5"><div class="empty-tracker-message">No problems found matching the selected filter.</div></td></tr>`;
         return;
     }
 
-    // group problems by pattern or topic
     const grouped = {};
     filtered.forEach(p => {
         const key = p.pattern || p.topic || 'Other';
@@ -361,7 +386,7 @@ export function renderTrackerTable() {
                     <a href="${lcHref}" target="_blank" rel="noopener noreferrer" class="problem-link">${p.id}. ${escapeHtml(p.name)}</a>
                 </td>
                 <td class="col-diff">
-                    <span class="diff-circle ${p.difficulty.toLowerCase()}" title="${p.difficulty}"></span>
+                    <span class="diff-circle ${p.difficulty.toLowerCase()}"></span>
                 </td>
                 <td class="col-comp">
                     ${companiesHtml}
@@ -393,7 +418,6 @@ export function renderTrackerTable() {
     });
 }
 
-// open problem tracker modal
 export function showProblemsTable() {
     const modal = document.getElementById('tracker-modal');
     if (!modal) return;
