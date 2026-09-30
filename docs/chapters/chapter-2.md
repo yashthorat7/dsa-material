@@ -627,7 +627,7 @@ Pruning cuts off massive subtrees of the state-space tree, turning computational
 
 The pruning condition acts as an early bounding guard that terminates dead ends before expanding deeper.
 
-$$\text{is_valid}(\text{state}) = \text{false} \implies \text{prune branch and backtrack}$$
+$$\text{is\_valid}(\text{state}) = \text{false} \implies \text{prune branch and backtrack}$$
 
 ```text
 1. CHOOSE   ---> Mark state (cols[c] = d1[diag1] = true)

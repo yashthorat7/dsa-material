@@ -1,9 +1,9 @@
 import { appState, loadProblems } from './state.js';
 import { initTheme } from './theme.js';
-import { initMarkdownRenderer } from './markdown.js';
+import { initMarkdownRenderer } from './markdown.js?v=2.0';
 import { setupSmartScrollHeader, setupHeaderButtons } from './nav.js';
 import { setupSearch, setupTrackerFilters, setupGlobalClickListeners } from './tracker.js';
-import { handleRoute, onMarkdownClick, isSolutionRoute } from './router.js';
+import { handleRoute, onMarkdownClick, isSolutionRoute } from './router.js?v=2.0';
 
 document.addEventListener('DOMContentLoaded', async () => {
     initTheme();

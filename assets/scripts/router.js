@@ -2,7 +2,7 @@ import { appState } from './state.js';
 import { normalizeStr, slugify } from './utils.js';
 import { closeAllPopovers, showProblemsTable } from './tracker.js';
 import { updateHeaderActiveState } from './nav.js';
-import { enhanceLeetCodeLinks, wrapTables } from './markdown.js';
+import { enhanceLeetCodeLinks, wrapTables } from './markdown.js?v=2.0';
 
 export function isChapterRoute(hash) {
     if (!hash) return false;
@@ -117,7 +117,8 @@ export function loadMarkdown(filepath, anchor = '') {
             return r.text();
         })
         .then(text => {
-            container.innerHTML = marked.parse(text);
+            const normalized = text.replace(/\r\n/g, '\n');
+            container.innerHTML = marked.parse(normalized);
 
             if (typeof renderMathInElement === 'function') {
                 renderMathInElement(container, {
@@ -127,6 +128,7 @@ export function loadMarkdown(filepath, anchor = '') {
                         { left: '\\(', right: '\\)', display: false },
                         { left: '\\[', right: '\\]', display: true }
                     ],
+                    output: 'html',
                     throwOnError: false
                 });
             }

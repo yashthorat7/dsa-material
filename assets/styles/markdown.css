@@ -477,6 +477,12 @@ pre[class*="language-"] {
     vertical-align: middle;
 }
 
+.katex-mathml {
+    display: none !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+}
+
 .video-wrapper {
     position: relative;
     width: 100%;

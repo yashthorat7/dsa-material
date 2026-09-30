@@ -335,7 +335,7 @@ Parentheses '(' push as barriers; ')' pops until matching '('.
 
 Operator precedence rules govern when operators on the stack must be popped.
 
-$$\text{Precedence}(\text{'^'}) = 3 \ (\text{right-assoc}) > \text{Precedence}(\text{'*'}, \text{'/'}) = 2 > \text{Precedence}(\text{'+'}, \text{'-'}) = 1$$
+$$\text{Precedence}(\text{'\textasciicircum'}) = 3 \ (\text{right-assoc}) > \text{Precedence}(\text{'*'}, \text{'/'}) = 2 > \text{Precedence}(\text{'+'}, \text{'-'}) = 1$$
 
 Let's implement the Shunting-Yard Infix-to-Postfix converter.
 

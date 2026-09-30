@@ -1,6 +1,16 @@
 import { escapeHtml, slugify } from './utils.js';
 import { appState } from './state.js';
 
+function sanitizeLatex(latex) {
+    if (!latex) return '';
+    // Auto-escape unescaped underscores and special symbols inside \text{...}
+    return latex.replace(/\\text\{([^}]+)\}/g, (m, content) => {
+        let clean = content.replace(/(?<!\\)_/g, '\\_');
+        clean = clean.replace(/(?<!\\)\^/g, '\\textasciicircum');
+        return '\\text{' + clean + '}';
+    });
+}
+
 export function initMarkdownRenderer() {
     if (typeof marked === 'undefined') return;
 
@@ -35,7 +45,76 @@ export function initMarkdownRenderer() {
         return `<pre><code class="language-${lang.toLowerCase()}">${escaped}</code></pre>`;
     };
 
-    marked.use({ renderer });
+    const mathExtension = {
+        extensions: [
+            {
+                name: 'mathBlock',
+                level: 'block',
+                start(src) {
+                    return src.indexOf('$$');
+                },
+                tokenizer(src) {
+                    const match = /^(?: {0,3})\$\$([\s\S]+?)\$\$(?:[ \t\r]*(?:\n|$))/.exec(src);
+                    if (match) {
+                        return {
+                            type: 'mathBlock',
+                            raw: match[0],
+                            text: match[1].trim()
+                        };
+                    }
+                },
+                renderer(token) {
+                    if (typeof katex === 'undefined') {
+                        return `<pre class="katex-raw">$$\n${escapeHtml(token.text)}\n$$</pre>\n`;
+                    }
+                    const cleanText = sanitizeLatex(token.text);
+                    try {
+                        return katex.renderToString(cleanText, {
+                            displayMode: true,
+                            output: 'html',
+                            throwOnError: false
+                        }) + '\n';
+                    } catch (e) {
+                        return `<pre class="katex-raw">$$\n${escapeHtml(token.text)}\n$$</pre>\n`;
+                    }
+                }
+            },
+            {
+                name: 'mathInline',
+                level: 'inline',
+                start(src) {
+                    return src.indexOf('$');
+                },
+                tokenizer(src) {
+                    const match = /^\$([^\s\$](?:[^\$\r\n]*?[^\s\$])?)\$/.exec(src);
+                    if (match) {
+                        return {
+                            type: 'mathInline',
+                            raw: match[0],
+                            text: match[1].trim()
+                        };
+                    }
+                },
+                renderer(token) {
+                    if (typeof katex === 'undefined') {
+                        return `$${escapeHtml(token.text)}$`;
+                    }
+                    const cleanText = sanitizeLatex(token.text);
+                    try {
+                        return katex.renderToString(cleanText, {
+                            displayMode: false,
+                            output: 'html',
+                            throwOnError: false
+                        });
+                    } catch (e) {
+                        return `$${escapeHtml(token.text)}$`;
+                    }
+                }
+            }
+        ]
+    };
+
+    marked.use({ renderer }, mathExtension);
 }
 
 export function wrapTables(container) {

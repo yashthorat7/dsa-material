@@ -397,7 +397,7 @@ Step 6: '}' -> Top '{' matches -> Pop!  Stack: [ Empty ] -> Valid!
 
 The stack matching invariant verifies scope nesting correctness:
 
-$$\text{is_closing}(c) \implies (\neg \text{empty}(\text{stack}) \land \text{matches}(\text{top}(\text{stack}), c))$$
+$$\text{is\_closing}(c) \implies (\neg \text{empty}(\text{stack}) \land \text{matches}(\text{top}(\text{stack}), c))$$
 
 Let's implement scope nesting validation in C++.
 

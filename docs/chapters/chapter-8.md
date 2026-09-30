@@ -725,7 +725,7 @@ Check 3: (3 - 1 = 2 is in set)  -> Skip (Not a sequence head)
 
 Streak heads are identified in constant time:
 
-$$\text{is_head}(x) = (x - 1 \notin \text{Set})$$
+$$\text{is\_head}(x) = (x - 1 \notin \text{Set})$$
 
 Let's implement the optimal $O(N)$ streak finder using `unordered_set`.
 
